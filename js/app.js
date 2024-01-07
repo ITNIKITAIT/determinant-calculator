@@ -15,7 +15,7 @@ const totalColumn = document.querySelector('.column');
 
 // Form to Matrix
 
-function FormToMatrix() {
+function formToMatrix() {
   const matrix = [];
   let length = Math.sqrt(form.length);
   
@@ -31,7 +31,7 @@ function FormToMatrix() {
 }
 
 //Minor method (not effective)
-function MinorDetCalc(matrix, length) {
+function minorDetCalc(matrix, length) {
   if (matrix.length === 1) return matrix[0];
   let result = 0;
   let row = matrix[0];
@@ -48,13 +48,13 @@ function MinorDetCalc(matrix, length) {
 
     let factor = 1;
     if (i % 2 != 0) factor = -1;
-    result += row[i] * MinorDetCalc(Minor, length - 1) * factor;
+    result += row[i] * minorDetCalc(Minor, length - 1) * factor;
   }
   return result;
 }
 
 // Gauss method
-function GaussDetCalc(matrix, length) {
+function gaussDetCalc(matrix, length) {
   let result = 1;
   for (let i = 0; i < length - 1; i++) {
     for (let j = i+1; j < length; j++) {
@@ -84,10 +84,10 @@ Buttons.calcBtn.addEventListener('click', () => {
       throw 'Matrix is not square';
     }
   
-    const {matrix, length} = FormToMatrix();
+    const {matrix, length} = formToMatrix();
   
-    // const result = MinorDetCalc(matrix, length);
-    const result = GaussDetCalc(matrix, length); 
+    // const result = minorDetCalc(matrix, length);
+    const result = gaussDetCalc(matrix, length); 
   
     determinant.textContent = `Determinant = ${result}`;
     determinant.style.color = '#fff';
