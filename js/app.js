@@ -22,7 +22,7 @@ function formToMatrix() {
   for (let i = 0; i < length; i++) {
     matrix.push([]);
     for (let j = 0; j < length; j++) {
-      let value = parseInt(form[length * i + j].value);
+      let value = parseFloat(form[length * i + j].value);
       if (Number.isNaN(value)) throw 'Incorrect cell format';
       matrix[i].push(value);
     }
