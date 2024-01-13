@@ -61,7 +61,7 @@ function formToMatrix() {
 function minorDetCalc(matrix, length) {
   if (matrix.length === 1) return matrix[0];
   let result = 0;
-  let firstRow = matrix[0];
+  const firstRow = matrix[0];
   for (let i = 0; i < length; i++) {
 
     const Minor = [];
