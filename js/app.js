@@ -13,11 +13,38 @@ const totalRow = document.querySelector('.row');
 const totalColumn = document.querySelector('.column');
 
 
+
+// Main function
+Buttons.calcBtn.addEventListener('click', () => {
+  try {
+    if (totalRow.value !== totalColumn.value) {
+      throw 'Matrix is not square';
+    }
+  
+    const {length, matrix} = formToMatrix();
+
+    console.log(matrix)
+    const result = minorDetCalc(matrix, length);
+    // const result = gaussDetCalc(matrix, length); 
+  
+    determinant.textContent = `Determinant = ${result}`;
+    determinant.style.color = '#fff';
+  }
+  catch(err) {
+    determinant.textContent = err;
+    determinant.style.color = 'red';
+  }
+  finally {
+    determinant.style.display = 'block';
+  }
+})
+
+
 // Form to Matrix
 
 function formToMatrix() {
   const matrix = [];
-  let length = Math.sqrt(form.length);
+  const length = Math.sqrt(form.length);
   
   for (let i = 0; i < length; i++) {
     matrix.push([]);
@@ -34,7 +61,7 @@ function formToMatrix() {
 function minorDetCalc(matrix, length) {
   if (matrix.length === 1) return matrix[0];
   let result = 0;
-  let row = matrix[0];
+  let firstRow = matrix[0];
   for (let i = 0; i < length; i++) {
 
     const Minor = [];
@@ -46,9 +73,9 @@ function minorDetCalc(matrix, length) {
       }
     }
 
-    let factor = 1;
+    let multiplier = 1;
     if (i % 2 != 0) factor = -1;
-    result += row[i] * minorDetCalc(Minor, length - 1) * factor;
+    result += firstRow[i] * minorDetCalc(Minor, length - 1) * multiplier;
   }
   return result;
 }
@@ -57,7 +84,7 @@ function minorDetCalc(matrix, length) {
 function gaussDetCalc(matrix, length) {
   let result = 1;
   for (let i = 0; i < length - 1; i++) {
-    for (let j = i+1; j < length; j++) {
+    for (let j = i + 1; j < length; j++) {
       if (matrix[i][i] === 0) {
         [matrix[j], matrix[i]] = [matrix[i], matrix[j]];
         result *= -1;
@@ -69,37 +96,13 @@ function gaussDetCalc(matrix, length) {
       }
     }
   }
-  console.log(matrix)
   for (let i = 0; i < length; i++) {
     result *= matrix[i][i];
   }
-  // console.log(Math.round(result))
+  
   return Math.round(result);
 }
 
-// main function
-Buttons.calcBtn.addEventListener('click', () => {
-  try {
-    if (totalRow.value !== totalColumn.value) {
-      throw 'Matrix is not square';
-    }
-  
-    const {matrix, length} = formToMatrix();
-  
-    // const result = minorDetCalc(matrix, length);
-    const result = gaussDetCalc(matrix, length); 
-  
-    determinant.textContent = `Determinant = ${result}`;
-    determinant.style.color = '#fff';
-  }
-  catch(err) {
-    determinant.textContent = err;
-    determinant.style.color = 'red';
-  }
-  finally {
-    determinant.style.display = 'block';
-  }
-})
 
 // Size of Matrix
 
@@ -154,13 +157,13 @@ totalColumn.addEventListener('change', () => {
 // additional buttons
 
 Buttons.randomBtn.addEventListener('click', () => {
-  for (let input of form) {
+  for (const input of form) {
     input.value = Math.floor(Math.random()*10);
   }
 })
 
 Buttons.clearBtn.addEventListener('click', () => {
-  for (let input of form) {
+  for (const input of form) {
     input.value = '';
   }
 })
