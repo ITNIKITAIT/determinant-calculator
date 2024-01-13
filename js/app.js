@@ -24,8 +24,8 @@ Buttons.calcBtn.addEventListener('click', () => {
     const {length, matrix} = formToMatrix();
 
     console.log(matrix)
-    const result = minorDetCalc(matrix, length);
-    // const result = gaussDetCalc(matrix, length); 
+    // const result = minorDetCalc(matrix, length);
+    const result = gaussDetCalc(matrix, length); 
   
     determinant.textContent = `Determinant = ${result}`;
     determinant.style.color = '#fff';
@@ -74,7 +74,7 @@ function minorDetCalc(matrix, length) {
     }
 
     let multiplier = 1;
-    if (i % 2 != 0) factor = -1;
+    if (i % 2 != 0) multiplier = -1;
     result += firstRow[i] * minorDetCalc(Minor, length - 1) * multiplier;
   }
   return result;
