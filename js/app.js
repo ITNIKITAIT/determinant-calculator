@@ -1,4 +1,4 @@
-const Buttons = {
+const buttons = {
   calcBtn: document.querySelector('.calcucate'),
   clearBtn: document.querySelector('.clear'),
   randomBtn: document.querySelector('.random'),
@@ -6,7 +6,9 @@ const Buttons = {
   rowMinusBtn: document.getElementById('row_minus'),
   columnPlusBtn: document.getElementById('column_plus'),
   columnMinusBtn: document.getElementById('column_minus'),
-}
+};
+
+
 const determinant = document.querySelector('.determinant');
 const form = document.querySelector('.form');
 const totalRow = document.querySelector('.row');
@@ -15,7 +17,7 @@ const totalColumn = document.querySelector('.column');
 
 
 // Main function
-Buttons.calcBtn.addEventListener('click', () => {
+buttons.calcBtn.addEventListener('click', () => {
   try {
     if (totalRow.value !== totalColumn.value) {
       throw 'Matrix is not square';
@@ -64,18 +66,19 @@ function minorDetCalc(matrix, length) {
   const firstRow = matrix[0];
   for (let i = 0; i < length; i++) {
 
-    const Minor = [];
+    const minor = [];
     for (let j = 1; j < length; j++) {
-      Minor.push([]);
+      const row = matrix[j];
+      minor.push([]);
       for (let k = 0; k < length; k++) {
         if (k === i) continue;
-        Minor[j - 1].push(matrix[j][k]);
+        minor[j - 1].push(row[k]);
       }
     }
 
     let multiplier = 1;
     if (i % 2 != 0) multiplier = -1;
-    result += firstRow[i] * minorDetCalc(Minor, length - 1) * multiplier;
+    result += firstRow[i] * minorDetCalc(minor, length - 1) * multiplier;
   }
   return result;
 }
@@ -84,15 +87,17 @@ function minorDetCalc(matrix, length) {
 function gaussDetCalc(matrix, length) {
   let result = 1;
   for (let i = 0; i < length - 1; i++) {
+    const prevRow = matrix[i];
     for (let j = i + 1; j < length; j++) {
-      if (matrix[i][i] === 0) {
-        [matrix[j], matrix[i]] = [matrix[i], matrix[j]];
+      const currentRow = matrix[j];
+      if (prevRow[i] === 0) {
+        [currentRow, prevRow] = [prevRow, currentRow];
         result *= -1;
         continue;
       } 
-      const multiplier = -matrix[j][i]/matrix[i][i];
+      const multiplier = -currentRow[i]/prevRow[i];
       for (let k = i; k < length; k++) {
-        matrix[j][k] += multiplier * matrix[i][k];
+        currentRow[k] += multiplier * prevRow[k];
       }
     }
   }
@@ -109,14 +114,15 @@ function gaussDetCalc(matrix, length) {
 function updateForm() {
   form.innerHTML = '';
   const totalInput = totalRow.value * totalColumn.value;
-  form.style.maxWidth = `${(totalInput/totalColumn.value)*80 + (totalInput/totalColumn.value - 1)*32}px`;
+  const ROW_WIDTH = 80;
+  const MARGIN_WIDTH = 32;
+  form.style.maxWidth = `${(totalInput/totalColumn.value) * ROW_WIDTH + (totalInput/totalColumn.value - 1) * MARGIN_WIDTH}px`;
   for (let i = 0; i < totalInput; i++) {
     form.insertAdjacentHTML('beforeend', 
     `<input type="text" id="${i}" class="input">`
     )
   }
 }
-
 
 function increment(input) {
   input.value = parseInt(input.value) + 1;
@@ -126,43 +132,32 @@ function decrement(input) {
   input.value = parseInt(input.value) - 1;
 }
 
-Buttons.rowPlusBtn.addEventListener('click', () => {
-  increment(totalRow);
-  updateForm();
-})
 
-Buttons.rowMinusBtn.addEventListener('click', () => {
-  decrement(totalRow);
-  updateForm();
-})
+function setButtonClickEvent(button, operation, target) {
+  button.addEventListener('click', () => {
+    operation(target);
+    updateForm();
+  })
+}
 
-Buttons.columnPlusBtn.addEventListener('click', () => {
-  increment(totalColumn);
-  updateForm();
-})
+setButtonClickEvent(buttons.rowPlusBtn, increment, totalRow);
+setButtonClickEvent(buttons.rowMinusBtn, decrement, totalRow);
+setButtonClickEvent(buttons.columnPlusBtn, increment, totalColumn);
+setButtonClickEvent(buttons.columnMinusBtn, decrement, totalColumn);
 
-Buttons.columnMinusBtn.addEventListener('click', () => {
-  decrement(totalColumn);
-  updateForm();
-})
-
-totalRow.addEventListener('change', () => {
-  updateForm();
-});
-
-totalColumn.addEventListener('change', () => {
-  updateForm();
-})
+totalRow.addEventListener('change', updateForm);
+totalColumn.addEventListener('change', updateForm);
 
 // additional buttons
 
-Buttons.randomBtn.addEventListener('click', () => {
+buttons.randomBtn.addEventListener('click', () => {
+  const MAX_VALUE = 10;
   for (const input of form) {
-    input.value = Math.floor(Math.random()*10);
+    input.value = Math.floor(Math.random() * MAX_VALUE);
   }
 })
 
-Buttons.clearBtn.addEventListener('click', () => {
+buttons.clearBtn.addEventListener('click', () => {
   for (const input of form) {
     input.value = '';
   }
